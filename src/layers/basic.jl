@@ -380,7 +380,7 @@ for a vocabulary of size `in`.
 
 This layers is often used to store word embeddings and retrieve them using indices. 
 The input to the layer can be either a vector of indexes
-or the corresponding onehot encoding. 
+or the corresponding [onehot encoding](@ref Flux.OneHotArray). 
 
 # Examples
 
