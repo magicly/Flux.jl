@@ -58,6 +58,7 @@ Maxout
 SkipConnection
 Parallel
 Bilinear
+Embedding
 ```
 
 ## Normalisation & Regularisation
