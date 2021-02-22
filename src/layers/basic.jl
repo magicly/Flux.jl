@@ -402,7 +402,8 @@ julia> model(x)
  -0.497621   0.87595    -0.870251   0.87595    -0.772696
 ```
 
-julia> model(vocab_idxs) # same as above
+julia> model(vocab_idxs) == model(x)
+true
 """
 struct Embedding{W}
   weight::W
