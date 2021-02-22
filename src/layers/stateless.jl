@@ -4,7 +4,7 @@
 Reshape arbitrarly-shaped input into a matrix-shaped output,
 preserving the size of the last dimension.
 
-See also [`unsqueeze`](@ref).
+See also [`unsqueeze`](@ref) and [`mat`](@ref).
 
 # Examples
 ```jldoctest
@@ -24,6 +24,18 @@ julia> xs |> m |> size
 """
 function flatten(x::AbstractArray)
   return reshape(x, :, size(x)[end])
+end
+
+"""
+    mat(x::AbstractArray)
+
+Reshape arbitrarly-shaped input into a matrix-shaped output,
+preserving the size of the first dimension.
+
+See also [`flatten`](@ref) and [`unsqueeze`](@ref).
+"""
+function mat(x::AbstractArray)
+  return reshape(x, size(x,1), :)
 end
 
 """

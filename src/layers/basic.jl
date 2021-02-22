@@ -120,13 +120,12 @@ end
 
 @functor Dense
 
-function (a::Dense)(x::AbstractArray)
+function (a::Dense)(x::Union{AbstractVector, AbstractMatrix})
   W, b, σ = a.W, a.b, a.σ
-  sz = size(x)
-  x = reshape(x, sz[1], :) # reshape to handle dims > 1 as batch dimensions 
-  x = σ.(W*x .+ b)
-  return reshape(x, :, sz[2:end]...)
+  return σ.(W*x .+ b)
 end
+
+(a::Dense)(x::AbstractArray) = reshape(a(mat(x)), :, size(x)[2:end]...)
 
 function Base.show(io::IO, l::Dense)
   print(io, "Dense(", size(l.W, 2), ", ", size(l.W, 1))
@@ -326,7 +325,7 @@ function Base.show(io::IO, l::Bilinear)
 end
 
 """
-Parallel(connection, layers...)
+    Parallel(connection, layers...)
 
 Create a 'Parallel' layer that passes an input array to each path in
 `layers`, reducing the output with `connection`.
@@ -416,10 +415,9 @@ function Embedding(in::Integer, out::Integer;
   return Embedding(init(out, in))
 end
 
-(m::Embedding)(x::OneHotMatrix) = m.weight * x # equivalent to m.weight[:, onecold(x)]
-(m::Embedding)(x::OneHotVector) = m.weight * x
-(m::Embedding)(x::AbstractVector) = m.weight[:, x]
-(m::Embedding)(x::Int) = m.weight[:, x]
+(m::Embedding)(x::Union{OneHotVector, OneHotMatrix}) = m.weight * x # equivalent to m.weight[:,onecold(x)]
+(m::Embedding)(x::Union{Int,AbstractVector}) = m.weight[:, x]
+(m::Embedding)(x::AbstractArray) = reshape(m(mat(x)), :, size(x)[2:end]...)
 
 function Base.show(io::IO, m::Embedding)
   print(io, "Embedding($(size(m.weight, 2)), $(size(m.weight, 1)))")
