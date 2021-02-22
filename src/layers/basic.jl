@@ -338,9 +338,8 @@ If called with multiple inputs, they are `zip`ped with the layers, thus `Paralle
 
 ```jldoctest
 julia> model = Chain(Dense(3, 5),
-                     Parallel(vcat, De
-                     print(io, ")")nse(5, 4), Chain(Dense(5, 7), Dense(7, 4))),
-                     Dense(8, 17));
+               Parallel(vcat, Dense(5, 4), Chain(Dense(5, 7), Dense(7, 4))),
+               Dense(8, 17));
 
 julia> size(model(rand(3)))
 (17,)
