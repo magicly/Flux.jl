@@ -120,12 +120,13 @@ end
 
 @functor Dense
 
-function (a::Dense)(x::Union{AbstractVector, AbstractMatrix})
+function (a::Dense)(x::AbstractVecOrMat)
   W, b, σ = a.W, a.b, a.σ
   return σ.(W*x .+ b)
 end
 
-(a::Dense)(x::AbstractArray) = reshape(a(mat(x)), :, size(x)[2:end]...)
+(a::Dense)(x::AbstractArray) = 
+  reshape(a(reshape(x, size(x,1), :)), :, size(x)[2:end]...)
 
 function Base.show(io::IO, l::Dense)
   print(io, "Dense(", size(l.W, 2), ", ", size(l.W, 1))
@@ -418,7 +419,7 @@ end
 
 (m::Embedding)(x::Union{OneHotVector, OneHotMatrix}) = m.weight * x # equivalent to m.weight[:,onecold(x)]
 (m::Embedding)(x::Union{Int,AbstractVector}) = m.weight[:, x]
-(m::Embedding)(x::AbstractArray) = reshape(m(mat(x)), :, size(x)[2:end]...)
+(m::Embedding)(x::AbstractArray) = reshape(m(vec(x)), :, size(x)...)
 
 function Base.show(io::IO, m::Embedding)
   print(io, "Embedding($(size(m.weight, 2)), $(size(m.weight, 1)))")

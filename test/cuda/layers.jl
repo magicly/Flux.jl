@@ -87,9 +87,6 @@ pixelshuffle = [PixelShuffle]
 gpu_gradtest("PixelShuffle 2d", pixelshuffle, rand(Float32, 3, 4, 18, 3), 3)
 gpu_gradtest("PixelShuffle 1d", pixelshuffle, rand(Float32, 3, 18, 3), 3)
 
-embedding = [Embedding]
-gpu_gradtest("Embedding", embedding, rand(1:10, 3), 10, 4)
-
 @testset "function layers" begin
   x = rand(Float32, 3,3)
   gpu_autodiff_test(x -> sum(Flux.normalise(x; dims=1)), x)

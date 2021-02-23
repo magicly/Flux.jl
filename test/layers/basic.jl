@@ -163,12 +163,16 @@ import Flux: activations
     y = m(x)
     @test y isa Matrix{Float32}
     @test y ≈ m.weight[:,x]
-
     x2 = OneHotMatrix(x, vocab_size)
     y2 = m(x2)
     @test y2 isa Matrix{Float32}
     @test y2 ≈ y
     @test_throws DimensionMismatch m(OneHotMatrix(x, 1000))
+
+    x = rand(1:vocab_size, 3, 4)
+    y = m(x)
+    @test y isa Array{Float32, 3}
+    @test size(y) ==  (embed_size, 3, 4)
 
     @test m(2) ≈ m.weight[:,2]
     @test m(OneHotVector(3, vocab_size)) ≈ m.weight[:,3]
