@@ -87,6 +87,8 @@ pixelshuffle = [PixelShuffle]
 gpu_gradtest("PixelShuffle 2d", pixelshuffle, rand(Float32, 3, 4, 18, 3), 3)
 gpu_gradtest("PixelShuffle 1d", pixelshuffle, rand(Float32, 3, 18, 3), 3)
 
+embedding = [Embedding]
+gpu_gradtest("Embedding", embedding, rand(1:10, 3), 10, 4)
 
 @testset "function layers" begin
   x = rand(Float32, 3,3)
@@ -218,18 +220,19 @@ end
       @test gs_cpu[pcpu] ≈ gs_gpu[pgpu]
     end
   end
-
-  @testset "Embedding" begin
-    vocab_size, embed_size = 10, 4
-    m = Embedding(vocab_size, embed_size)
-    x = rand(1:vocab_size, 3)
-    y = m(x)
-    m_g = m |> gpu
-    x_g = x |> gpu
-    y_g = m_g(x_g)
-    @test collect(y_g) == y
-    gs = gradient(() -> sum(tanh.(m(x))), params(m))
-    gs_g = gradient(() -> sum(tanh.(m_g(x_g))), params(m_g))
-    @test collect(gs_g[m_g.weight]) ≈ gs[m.weight]
-  end
 end
+
+@testset "Embedding" begin
+  vocab_size, embed_size = 10, 4
+  m = Embedding(vocab_size, embed_size)
+  x = rand(1:vocab_size, 3)
+  y = m(x)
+  m_g = m |> gpu
+  x_g = x |> gpu
+  y_g = m_g(x_g)
+  @test collect(y_g) == y
+  gs = gradient(() -> sum(tanh.(m(x))), params(m))
+  gs_g = gradient(() -> sum(tanh.(m_g(x_g))), params(m_g))
+  @test collect(gs_g[m_g.weight]) ≈ gs[m.weight]
+end
+
